@@ -49,6 +49,72 @@
             android:layout_marginTop="8dp"
             android:padding="12dp" />
 
+        <!-- 테마 선택 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="테마"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <Spinner
+            android:id="@+id/theme_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="12dp" />
+
+        <!-- 배경 이미지 선택 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="배경 이미지"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/select_image_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="갤러리에서 선택"
+            android:textSize="14sp" />
+
+        <!-- 스티커 선택 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="스티커"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/select_sticker_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="스티커 선택"
+            android:textSize="14sp" />
+
+        <!-- 프레임 스타일 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="프레임 스타일"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <Spinner
+            android:id="@+id/frame_style_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="12dp" />
+
         <!-- 배경색 -->
         <TextView
             android:layout_width="wrap_content"
@@ -109,36 +175,69 @@
             android:textStyle="bold"
             android:layout_marginTop="24dp" />
 
-        <LinearLayout
-            android:id="@+id/preview_container"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:background="#CC000000"
-            android:gravity="center">
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp">
 
-            <TextView
-                android:id="@+id/preview_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="이벤트 제목"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+            <!-- 배경 이미지 -->
+            <ImageView
+                android:id="@+id/preview_background_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:contentDescription="배경 이미지 미리보기" />
 
-            <TextView
-                android:id="@+id/preview_dday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="D-100"
-                android:textColor="#FFFFFF"
-                android:textSize="32sp"
-                android:textStyle="bold" />
+            <!-- 메인 컨텐츠 컨테이너 -->
+            <LinearLayout
+                android:id="@+id/preview_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="#CC000000"
+                android:gravity="center">
 
-        </LinearLayout>
+                <!-- 스티커 -->
+                <ImageView
+                    android:id="@+id/preview_sticker"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone"
+                    android:contentDescription="스티커 미리보기" />
+
+                <TextView
+                    android:id="@+id/preview_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="이벤트 제목"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:shadowColor="#000000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="3" />
+
+                <TextView
+                    android:id="@+id/preview_dday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="D-100"
+                    android:textColor="#FFFFFF"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    android:shadowColor="#000000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="3" />
+
+            </LinearLayout>
+
+        </FrameLayout>
 
         <!-- 확인 버튼 -->
         <Button
