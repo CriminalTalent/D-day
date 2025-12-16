@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 
-여러 이벤트 선택 설정 화면 레이아웃
+<!--
 📁 경로: app/src/main/res/layout/activity_multi_widget_config.xml
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -105,6 +104,66 @@
             android:layout_marginTop="8dp"
             android:text="스티커 선택"
             android:textSize="14sp" />
+
+        <!-- 🎨 스티커 색상 커스터마이징 (NEW!) -->
+        <CheckBox
+            android:id="@+id/sticker_color_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="스티커 색상 변경"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:id="@+id/sticker_color_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="빨강 (R)"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp" />
+
+            <SeekBar
+                android:id="@+id/sticker_red_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="255"
+                android:progress="255" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="초록 (G)"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp" />
+
+            <SeekBar
+                android:id="@+id/sticker_green_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="255"
+                android:progress="255" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="파랑 (B)"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp" />
+
+            <SeekBar
+                android:id="@+id/sticker_blue_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="255"
+                android:progress="255" />
+
+        </LinearLayout>
 
         <!-- 배경색 -->
         <TextView
