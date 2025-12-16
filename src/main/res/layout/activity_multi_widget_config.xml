@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-📁 경로: app/src/main/res/layout/activity_widget_config.xml
+📁 경로: app/src/main/res/layout/activity_multi_widget_config.xml
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -15,12 +15,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="위젯 설정"
+            android:text="여러 디데이 위젯 설정"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="16dp" />
 
-        <!-- 이벤트 선택 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="최소 1개, 최대 20개의 이벤트를 선택하세요"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="8dp" />
+
+        <!-- 이벤트 선택 리스트 -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,28 +37,23 @@
             android:textStyle="bold"
             android:layout_marginTop="8dp" />
 
-        <Spinner
-            android:id="@+id/event_spinner"
+        <ListView
+            android:id="@+id/event_list_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_marginTop="8dp"
-            android:padding="12dp" />
+            android:choiceMode="multipleChoice"
+            android:background="#F5F5F5" />
 
-        <!-- 표시 형식 -->
         <TextView
+            android:id="@+id/selected_events_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="표시 형식"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
-
-        <Spinner
-            android:id="@+id/display_format_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:padding="12dp" />
+            android:text="선택된 이벤트: 없음"
+            android:textSize="14sp"
+            android:textColor="#FF6B6B"
+            android:textStyle="bold" />
 
         <!-- 테마 선택 -->
         <TextView
@@ -59,7 +62,7 @@
             android:text="테마"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="24dp" />
 
         <Spinner
             android:id="@+id/theme_spinner"
@@ -72,7 +75,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="배경 이미지"
+            android:text="배경 이미지 (선택사항)"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp" />
@@ -89,7 +92,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="스티커"
+            android:text="스티커 (선택사항)"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp" />
@@ -162,22 +165,6 @@
 
         </LinearLayout>
 
-        <!-- 프레임 스타일 -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="프레임 스타일"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
-
-        <Spinner
-            android:id="@+id/frame_style_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="12dp" />
-
         <!-- 배경색 -->
         <TextView
             android:layout_width="wrap_content"
@@ -212,104 +199,15 @@
             android:max="255"
             android:progress="255" />
 
-        <!-- 폰트 크기 -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="폰트 크기"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
-
-        <SeekBar
-            android:id="@+id/font_size_seekbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:max="100"
-            android:progress="50" />
-
-        <!-- 미리보기 -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="미리보기"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="24dp" />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="8dp">
-
-            <!-- 배경 이미지 -->
-            <ImageView
-                android:id="@+id/preview_background_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:visibility="gone"
-                android:contentDescription="배경 이미지 미리보기" />
-
-            <!-- 메인 컨텐츠 컨테이너 -->
-            <LinearLayout
-                android:id="@+id/preview_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:background="#CC000000"
-                android:gravity="center">
-
-                <!-- 스티커 -->
-                <ImageView
-                    android:id="@+id/preview_sticker"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="8dp"
-                    android:visibility="gone"
-                    android:contentDescription="스티커 미리보기" />
-
-                <TextView
-                    android:id="@+id/preview_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="이벤트 제목"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:shadowColor="#000000"
-                    android:shadowDx="2"
-                    android:shadowDy="2"
-                    android:shadowRadius="3" />
-
-                <TextView
-                    android:id="@+id/preview_dday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="D-100"
-                    android:textColor="#FFFFFF"
-                    android:textSize="32sp"
-                    android:textStyle="bold"
-                    android:shadowColor="#000000"
-                    android:shadowDx="2"
-                    android:shadowDy="2"
-                    android:shadowRadius="3" />
-
-            </LinearLayout>
-
-        </FrameLayout>
-
         <!-- 확인 버튼 -->
         <Button
             android:id="@+id/confirm_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:text="위젯 추가"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:backgroundTint="#4CAF50" />
 
     </LinearLayout>
 
