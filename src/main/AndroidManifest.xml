@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+📁 경로: app/src/main/AndroidManifest.xml
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ddaywidget">
 
@@ -25,7 +28,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Widget Configuration Activity -->
+        <!-- Widget Configuration Activity (단일 위젯) -->
         <activity
             android:name=".WidgetConfigActivity"
             android:exported="false">
@@ -34,7 +37,16 @@
             </intent-filter>
         </activity>
 
-        <!-- Widget Provider -->
+        <!-- Multi Widget Configuration Activity (멀티 위젯) -->
+        <activity
+            android:name=".MultiWidgetConfigActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <!-- Widget Provider (단일 위젯) -->
         <receiver
             android:name=".DdayWidgetProvider"
             android:exported="true">
@@ -45,6 +57,19 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/dday_widget_info" />
+        </receiver>
+
+        <!-- Multi Widget Provider (멀티 위젯) -->
+        <receiver
+            android:name=".DdayMultiWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.ddaywidget.UPDATE_MULTI_WIDGET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/dday_multi_widget_info" />
         </receiver>
 
         <!-- Boot Receiver for Alarm -->
