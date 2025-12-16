@@ -9,7 +9,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
-/**
+/*
  * 여러 이벤트를 선택할 수 있는 위젯 설정 Activity
  * 
  * 경로: app/src/main/java/com/example/ddaywidget/MultiWidgetConfigActivity.kt
