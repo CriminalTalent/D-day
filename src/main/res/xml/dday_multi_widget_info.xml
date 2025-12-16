@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+여러 디데이 위젯 정보 설정
+📁 경로: app/src/main/res/xml/dday_multi_widget_info.xml
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="180dp"
+    android:minHeight="180dp"
+    android:updatePeriodMillis="0"
+    android:previewImage="@android:drawable/ic_menu_today"
+    android:initialLayout="@layout/widget_layout_multi"
+    android:configure="com.example.ddaywidget.MultiWidgetConfigActivity"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen"
+    android:description="@string/multi_widget_description" />
