@@ -5,12 +5,16 @@ import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 /**
- * 위젯 설정 Activity
+ * 위젯 설정 Activity (스티커 색상 커스터마이징 포함)
  * 위젯 추가 시 나타나는 설정 화면
+ * 
+ * 📁 경로: app/src/main/java/com/example/ddaywidget/WidgetConfigActivity.kt
  */
 class WidgetConfigActivity : AppCompatActivity() {
 
@@ -40,6 +44,15 @@ class WidgetConfigActivity : AppCompatActivity() {
     private lateinit var themeSpinner: Spinner
     private lateinit var previewBackgroundImage: ImageView
     private lateinit var previewSticker: ImageView
+    
+    // 🎨 스티커 색상 커스터마이징 UI
+    private lateinit var stickerColorCheckbox: CheckBox
+    private lateinit var stickerColorContainer: LinearLayout
+    private lateinit var stickerRedSeekBar: SeekBar
+    private lateinit var stickerGreenSeekBar: SeekBar
+    private lateinit var stickerBlueSeekBar: SeekBar
+    private var stickerColorEnabled = false
+    private var customStickerColor = 0xFFFFFFFF.toInt() // 기본 흰색
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +101,13 @@ class WidgetConfigActivity : AppCompatActivity() {
         themeSpinner = findViewById(R.id.theme_spinner)
         previewBackgroundImage = findViewById(R.id.preview_background_image)
         previewSticker = findViewById(R.id.preview_sticker)
+        
+        // 🎨 스티커 색상 관련 View 초기화
+        stickerColorCheckbox = findViewById(R.id.sticker_color_checkbox)
+        stickerColorContainer = findViewById(R.id.sticker_color_container)
+        stickerRedSeekBar = findViewById(R.id.sticker_red_seekbar)
+        stickerGreenSeekBar = findViewById(R.id.sticker_green_seekbar)
+        stickerBlueSeekBar = findViewById(R.id.sticker_blue_seekbar)
 
         // 표시 형식 스피너 설정
         val formatAdapter = ArrayAdapter(
@@ -235,6 +255,32 @@ class WidgetConfigActivity : AppCompatActivity() {
         selectStickerButton.setOnClickListener {
             showStickerPicker()
         }
+        
+        // 🎨 스티커 색상 변경 체크박스
+        stickerColorCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            stickerColorEnabled = isChecked
+            stickerColorContainer.visibility = if (isChecked) View.VISIBLE else View.GONE
+            updatePreview()
+        }
+        
+        // 🎨 RGB SeekBar 리스너
+        val colorChangeListener = object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (stickerColorEnabled) {
+                    val r = stickerRedSeekBar.progress
+                    val g = stickerGreenSeekBar.progress
+                    val b = stickerBlueSeekBar.progress
+                    customStickerColor = Color.rgb(r, g, b)
+                    updatePreview()
+                }
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        }
+        
+        stickerRedSeekBar.setOnSeekBarChangeListener(colorChangeListener)
+        stickerGreenSeekBar.setOnSeekBarChangeListener(colorChangeListener)
+        stickerBlueSeekBar.setOnSeekBarChangeListener(colorChangeListener)
 
         // 확인 버튼
         confirmButton.setOnClickListener {
@@ -322,15 +368,15 @@ class WidgetConfigActivity : AppCompatActivity() {
                     android.net.Uri.parse(selectedImageUri)
                 )
                 previewBackgroundImage.setImageBitmap(bitmap)
-                previewBackgroundImage.visibility = android.view.View.VISIBLE
+                previewBackgroundImage.visibility = View.VISIBLE
                 // 이미지 있을 때는 배경색 적용 안함
-                previewContainer.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                previewContainer.setBackgroundColor(Color.TRANSPARENT)
             } catch (e: Exception) {
-                previewBackgroundImage.visibility = android.view.View.GONE
+                previewBackgroundImage.visibility = View.GONE
                 applyBackgroundColor()
             }
         } else {
-            previewBackgroundImage.visibility = android.view.View.GONE
+            previewBackgroundImage.visibility = View.GONE
             applyBackgroundColor()
         }
         
@@ -339,12 +385,19 @@ class WidgetConfigActivity : AppCompatActivity() {
             val stickerItem = StickerResources.getStickerById(selectedStickerId!!)
             if (stickerItem != null) {
                 previewSticker.setImageResource(stickerItem.resourceId)
-                previewSticker.visibility = android.view.View.VISIBLE
+                previewSticker.visibility = View.VISIBLE
+                
+                // 🎨 스티커 색상 적용
+                if (stickerColorEnabled) {
+                    previewSticker.setColorFilter(customStickerColor)
+                } else {
+                    previewSticker.clearColorFilter() // 기본 색상
+                }
             } else {
-                previewSticker.visibility = android.view.View.GONE
+                previewSticker.visibility = View.GONE
             }
         } else {
-            previewSticker.visibility = android.view.View.GONE
+            previewSticker.visibility = View.GONE
         }
 
         // 텍스트 색상 적용
@@ -442,6 +495,12 @@ class WidgetConfigActivity : AppCompatActivity() {
         prefs.saveStickerId(appWidgetId, selectedStickerId)
         prefs.saveFrameStyle(appWidgetId, selectedFrameStyle)
         prefs.saveTheme(appWidgetId, selectedTheme)
+        
+        // 🎨 스티커 색상 저장
+        prefs.saveStickerColorEnabled(appWidgetId, stickerColorEnabled)
+        if (stickerColorEnabled) {
+            prefs.saveStickerColor(appWidgetId, customStickerColor)
+        }
 
         // 위젯 업데이트
         val appWidgetManager = AppWidgetManager.getInstance(this)
