@@ -62,10 +62,10 @@ class WidgetPreferences(context: Context) {
     }
 
     /**
-     * 특정 위젯에 연결된 여러 이벤트 ID 저장 (최대 3개)
+     * 특정 위젯에 연결된 여러 이벤트 ID 저장 (최대 20개)
      */
     fun saveWidgetEvents(widgetId: Int, eventIds: List<String>) {
-        val limitedIds = eventIds.take(3) // 최대 3개만
+        val limitedIds = eventIds.take(20) // 최대 20개만
         val json = gson.toJson(limitedIds)
         prefs.edit().putString(KEY_WIDGET_EVENT + widgetId + "_multi", json).apply()
     }
