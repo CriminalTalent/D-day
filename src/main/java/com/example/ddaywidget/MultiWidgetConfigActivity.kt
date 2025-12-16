@@ -116,10 +116,10 @@ class MultiWidgetConfigActivity : AppCompatActivity() {
             if (selectedEventIds.contains(selectedEvent.id)) {
                 selectedEventIds.remove(selectedEvent.id)
             } else {
-                if (selectedEventIds.size < 3) {
+                if (selectedEventIds.size < 20) {
                     selectedEventIds.add(selectedEvent.id)
                 } else {
-                    Toast.makeText(this, "최대 3개까지 선택 가능합니다", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "최대 20개까지 선택 가능합니다", Toast.LENGTH_SHORT).show()
                     eventListView.setItemChecked(position, false)
                 }
             }
@@ -161,7 +161,7 @@ class MultiWidgetConfigActivity : AppCompatActivity() {
 
     private fun updateSelectedEventsText() {
         if (selectedEventIds.isEmpty()) {
-            selectedEventsText.text = "이벤트를 선택하세요 (최소 1개, 최대 3개)"
+            selectedEventsText.text = "이벤트를 선택하세요 (최소 1개, 최대 20개)"
         } else {
             val events = prefs.loadEvents()
             val selectedNames = selectedEventIds.mapNotNull { id ->
