@@ -5,14 +5,15 @@ import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
-/*
- * 여러 이벤트를 선택할 수 있는 위젯 설정 Activity
+/**
+ * 여러 이벤트를 선택할 수 있는 위젯 설정 Activity (스티커 색상 커스터마이징 포함)
  * 
- * 경로: app/src/main/java/com/example/ddaywidget/MultiWidgetConfigActivity.kt
+ * 📁 경로: app/src/main/java/com/example/ddaywidget/MultiWidgetConfigActivity.kt
  */
 class MultiWidgetConfigActivity : AppCompatActivity() {
 
@@ -32,6 +33,15 @@ class MultiWidgetConfigActivity : AppCompatActivity() {
     private lateinit var bgColorSeekBar: SeekBar
     private lateinit var textColorSeekBar: SeekBar
     private lateinit var confirmButton: Button
+    
+    // 🎨 스티커 색상 커스터마이징 UI
+    private lateinit var stickerColorCheckbox: CheckBox
+    private lateinit var stickerColorContainer: LinearLayout
+    private lateinit var stickerRedSeekBar: SeekBar
+    private lateinit var stickerGreenSeekBar: SeekBar
+    private lateinit var stickerBlueSeekBar: SeekBar
+    private var stickerColorEnabled = false
+    private var customStickerColor = 0xFFFFFFFF.toInt() // 기본 흰색
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +81,13 @@ class MultiWidgetConfigActivity : AppCompatActivity() {
         bgColorSeekBar = findViewById(R.id.bg_color_seekbar)
         textColorSeekBar = findViewById(R.id.text_color_seekbar)
         confirmButton = findViewById(R.id.confirm_button)
+        
+        // 🎨 스티커 색상 관련 View 초기화
+        stickerColorCheckbox = findViewById(R.id.sticker_color_checkbox)
+        stickerColorContainer = findViewById(R.id.sticker_color_container)
+        stickerRedSeekBar = findViewById(R.id.sticker_red_seekbar)
+        stickerGreenSeekBar = findViewById(R.id.sticker_green_seekbar)
+        stickerBlueSeekBar = findViewById(R.id.sticker_blue_seekbar)
 
         // 테마 스피너 설정
         val themeAdapter = ArrayAdapter(
@@ -152,6 +169,30 @@ class MultiWidgetConfigActivity : AppCompatActivity() {
         selectStickerButton.setOnClickListener {
             showStickerPicker()
         }
+        
+        // 🎨 스티커 색상 변경 체크박스
+        stickerColorCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            stickerColorEnabled = isChecked
+            stickerColorContainer.visibility = if (isChecked) View.VISIBLE else View.GONE
+        }
+        
+        // 🎨 RGB SeekBar 리스너
+        val colorChangeListener = object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (stickerColorEnabled) {
+                    val r = stickerRedSeekBar.progress
+                    val g = stickerGreenSeekBar.progress
+                    val b = stickerBlueSeekBar.progress
+                    customStickerColor = Color.rgb(r, g, b)
+                }
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        }
+        
+        stickerRedSeekBar.setOnSeekBarChangeListener(colorChangeListener)
+        stickerGreenSeekBar.setOnSeekBarChangeListener(colorChangeListener)
+        stickerBlueSeekBar.setOnSeekBarChangeListener(colorChangeListener)
 
         // 확인 버튼
         confirmButton.setOnClickListener {
@@ -167,7 +208,7 @@ class MultiWidgetConfigActivity : AppCompatActivity() {
             val selectedNames = selectedEventIds.mapNotNull { id ->
                 events.find { it.id == id }?.title
             }
-            selectedEventsText.text = "선택된 이벤트: ${selectedNames.joinToString(", ")}"
+            selectedEventsText.text = "선택된 이벤트 (${selectedEventIds.size}개): ${selectedNames.joinToString(", ")}"
         }
     }
 
@@ -245,6 +286,12 @@ class MultiWidgetConfigActivity : AppCompatActivity() {
         prefs.saveBackgroundImage(appWidgetId, selectedImageUri)
         prefs.saveStickerId(appWidgetId, selectedStickerId)
         prefs.saveTheme(appWidgetId, selectedTheme)
+        
+        // 🎨 스티커 색상 저장
+        prefs.saveStickerColorEnabled(appWidgetId, stickerColorEnabled)
+        if (stickerColorEnabled) {
+            prefs.saveStickerColor(appWidgetId, customStickerColor)
+        }
 
         // 위젯 업데이트
         val appWidgetManager = AppWidgetManager.getInstance(this)
