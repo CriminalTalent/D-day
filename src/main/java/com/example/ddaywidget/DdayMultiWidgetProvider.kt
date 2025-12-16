@@ -7,20 +7,50 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.graphics.PorterDuff
 import android.widget.RemoteViews
 import java.util.*
 
 /**
- * 디데이 위젯 프로바이더 (스티커 색상 커스터마이징 포함)
+ * 여러 디데이를 표시하는 위젯 프로바이더 (최대 20개, 스티커 색상 커스터마이징 포함)
  * 
- * 경로: app/src/main/java/com/example/ddaywidget/DdayWidgetProvider.kt
+ * 📁 경로: app/src/main/java/com/example/ddaywidget/DdayMultiWidgetProvider.kt
  */
-class DdayWidgetProvider : AppWidgetProvider() {
+class DdayMultiWidgetProvider : AppWidgetProvider() {
 
     companion object {
-        const val ACTION_UPDATE_WIDGET = "com.example.ddaywidget.UPDATE_WIDGET"
+        const val ACTION_UPDATE_WIDGET = "com.example.ddaywidget.UPDATE_MULTI_WIDGET"
         private const val UPDATE_INTERVAL = 60 * 1000L // 1분마다 업데이트
+        
+        // 20개의 이벤트 컨테이너 ID
+        private val EVENT_CONTAINER_IDS = listOf(
+            R.id.event_1_container, R.id.event_2_container, R.id.event_3_container,
+            R.id.event_4_container, R.id.event_5_container, R.id.event_6_container,
+            R.id.event_7_container, R.id.event_8_container, R.id.event_9_container,
+            R.id.event_10_container, R.id.event_11_container, R.id.event_12_container,
+            R.id.event_13_container, R.id.event_14_container, R.id.event_15_container,
+            R.id.event_16_container, R.id.event_17_container, R.id.event_18_container,
+            R.id.event_19_container, R.id.event_20_container
+        )
+        
+        private val EVENT_TITLE_IDS = listOf(
+            R.id.event_1_title, R.id.event_2_title, R.id.event_3_title,
+            R.id.event_4_title, R.id.event_5_title, R.id.event_6_title,
+            R.id.event_7_title, R.id.event_8_title, R.id.event_9_title,
+            R.id.event_10_title, R.id.event_11_title, R.id.event_12_title,
+            R.id.event_13_title, R.id.event_14_title, R.id.event_15_title,
+            R.id.event_16_title, R.id.event_17_title, R.id.event_18_title,
+            R.id.event_19_title, R.id.event_20_title
+        )
+        
+        private val EVENT_DDAY_IDS = listOf(
+            R.id.event_1_dday, R.id.event_2_dday, R.id.event_3_dday,
+            R.id.event_4_dday, R.id.event_5_dday, R.id.event_6_dday,
+            R.id.event_7_dday, R.id.event_8_dday, R.id.event_9_dday,
+            R.id.event_10_dday, R.id.event_11_dday, R.id.event_12_dday,
+            R.id.event_13_dday, R.id.event_14_dday, R.id.event_15_dday,
+            R.id.event_16_dday, R.id.event_17_dday, R.id.event_18_dday,
+            R.id.event_19_dday, R.id.event_20_dday
+        )
     }
 
     override fun onUpdate(
@@ -61,14 +91,14 @@ class DdayWidgetProvider : AppWidgetProvider() {
         if (intent.action == ACTION_UPDATE_WIDGET) {
             // 커스텀 업데이트 액션
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val componentName = ComponentName(context, DdayWidgetProvider::class.java)
+            val componentName = ComponentName(context, DdayMultiWidgetProvider::class.java)
             val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
             onUpdate(context, appWidgetManager, appWidgetIds)
         }
     }
 
     /**
-     * 개별 위젯 업데이트
+     * 개별 위젯 업데이트 (여러 이벤트 표시, 최대 20개)
      */
     private fun updateWidget(
         context: Context,
@@ -76,18 +106,12 @@ class DdayWidgetProvider : AppWidgetProvider() {
         appWidgetId: Int
     ) {
         val prefs = WidgetPreferences(context)
-        val event = prefs.loadWidgetEvent(appWidgetId) ?: return
+        val events = prefs.loadWidgetEvents(appWidgetId)
+        
+        if (events.isEmpty()) return
 
         // RemoteViews 생성
-        val views = RemoteViews(context.packageName, R.layout.widget_layout)
-
-        // 이벤트 정보 표시
-        views.setTextViewText(R.id.widget_title, event.title)
-        views.setTextViewText(R.id.widget_dday, DdayCalculator.getDisplayText(event))
-        views.setTextViewText(R.id.widget_detail, DdayCalculator.getDetailedText(event.targetDate))
-
-        // 테마 적용
-        applyTheme(views, prefs.loadTheme(appWidgetId))
+        val views = RemoteViews(context.packageName, R.layout.widget_layout_multi)
 
         // 배경 이미지 적용
         val bgImageUri = prefs.loadBackgroundImage(appWidgetId)
@@ -137,21 +161,25 @@ class DdayWidgetProvider : AppWidgetProvider() {
             views.setViewVisibility(R.id.widget_sticker, android.view.View.GONE)
         }
 
-        // 텍스트 색상 및 크기 적용
+        // 텍스트 색상
         val textColor = prefs.loadTextColor(appWidgetId)
-        val fontSize = prefs.loadFontSize(appWidgetId)
 
-        views.setTextColor(R.id.widget_title, textColor)
-        views.setTextColor(R.id.widget_dday, textColor)
-        views.setTextColor(R.id.widget_detail, textColor)
-        views.setFloat(R.id.widget_dday, "setTextSize", fontSize)
-
-        // 프레임 스타일 적용
-        applyFrameStyle(context, views, prefs.loadFrameStyle(appWidgetId))
+        // 최대 20개의 이벤트 표시
+        for (i in 0 until 20) {
+            if (i < events.size) {
+                val event = events[i]
+                views.setTextViewText(EVENT_TITLE_IDS[i], event.title)
+                views.setTextViewText(EVENT_DDAY_IDS[i], DdayCalculator.getDisplayText(event))
+                views.setTextColor(EVENT_TITLE_IDS[i], textColor)
+                views.setTextColor(EVENT_DDAY_IDS[i], textColor)
+                views.setViewVisibility(EVENT_CONTAINER_IDS[i], android.view.View.VISIBLE)
+            } else {
+                views.setViewVisibility(EVENT_CONTAINER_IDS[i], android.view.View.GONE)
+            }
+        }
 
         // 클릭 시 MainActivity 열기
         val intent = Intent(context, MainActivity::class.java)
-        intent.putExtra("eventId", event.id)
         val pendingIntent = PendingIntent.getActivity(
             context,
             appWidgetId,
@@ -165,56 +193,16 @@ class DdayWidgetProvider : AppWidgetProvider() {
     }
 
     /**
-     * 테마 적용
-     */
-    private fun applyTheme(views: RemoteViews, theme: WidgetTheme) {
-        val (bgColor, textColor) = when (theme) {
-            WidgetTheme.LIGHT -> Pair(0xFFFFFFFF.toInt(), 0xFF000000.toInt())
-            WidgetTheme.DARK -> Pair(0xFF000000.toInt(), 0xFFFFFFFF.toInt())
-            WidgetTheme.PASTEL -> Pair(0xFFFFF5F5.toInt(), 0xFF4A4A4A.toInt())
-            WidgetTheme.VIBRANT -> Pair(0xFFFF6B6B.toInt(), 0xFFFFFFFF.toInt())
-            WidgetTheme.MINIMAL -> Pair(0xFFF5F5F5.toInt(), 0xFF333333.toInt())
-        }
-        // 테마는 배경 이미지가 없을 때만 적용됨
-    }
-
-    /**
-     * 프레임 스타일 적용
-     */
-    private fun applyFrameStyle(context: Context, views: RemoteViews, frameStyle: FrameStyle) {
-        // 프레임 스타일에 따라 배경 drawable 변경
-        // 실제 구현 시 drawable 리소스가 필요
-        when (frameStyle) {
-            FrameStyle.NONE -> {} // 프레임 없음
-            FrameStyle.ROUND_CORNER -> {
-                // views.setInt(R.id.widget_container, "setBackgroundResource", R.drawable.frame_round_corner)
-            }
-            FrameStyle.CIRCLE -> {
-                // views.setInt(R.id.widget_container, "setBackgroundResource", R.drawable.frame_circle)
-            }
-            FrameStyle.HEART -> {
-                // views.setInt(R.id.widget_container, "setBackgroundResource", R.drawable.frame_heart)
-            }
-            FrameStyle.STAR -> {
-                // views.setInt(R.id.widget_container, "setBackgroundResource", R.drawable.frame_star)
-            }
-            FrameStyle.POLAROID -> {
-                // views.setInt(R.id.widget_container, "setBackgroundResource", R.drawable.frame_polaroid)
-            }
-        }
-    }
-
-    /**
      * 주기적 업데이트 스케줄링
      */
     private fun scheduleUpdate(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, DdayWidgetProvider::class.java).apply {
+        val intent = Intent(context, DdayMultiWidgetProvider::class.java).apply {
             action = ACTION_UPDATE_WIDGET
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            0,
+            1, // 다른 ID 사용
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -240,12 +228,12 @@ class DdayWidgetProvider : AppWidgetProvider() {
      */
     private fun cancelUpdate(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, DdayWidgetProvider::class.java).apply {
+        val intent = Intent(context, DdayMultiWidgetProvider::class.java).apply {
             action = ACTION_UPDATE_WIDGET
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            0,
+            1,
             intent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )
