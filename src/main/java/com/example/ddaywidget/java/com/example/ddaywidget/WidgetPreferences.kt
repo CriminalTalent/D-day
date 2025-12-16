@@ -7,6 +7,8 @@ import com.google.gson.reflect.TypeToken
 
 /**
  * 위젯 설정을 SharedPreferences에 저장/로드하는 헬퍼 클래스
+ * 
+ * 📁 경로: app/src/main/java/com/example/ddaywidget/WidgetPreferences.kt
  */
 class WidgetPreferences(context: Context) {
     
@@ -57,6 +59,33 @@ class WidgetPreferences(context: Context) {
     fun loadWidgetEvent(widgetId: Int): Event? {
         val eventId = prefs.getString(KEY_WIDGET_EVENT + widgetId, null) ?: return null
         return loadEvents().find { it.id == eventId }
+    }
+
+    /**
+     * 특정 위젯에 연결된 여러 이벤트 ID 저장 (최대 3개)
+     */
+    fun saveWidgetEvents(widgetId: Int, eventIds: List<String>) {
+        val limitedIds = eventIds.take(3) // 최대 3개만
+        val json = gson.toJson(limitedIds)
+        prefs.edit().putString(KEY_WIDGET_EVENT + widgetId + "_multi", json).apply()
+    }
+
+    /**
+     * 특정 위젯에 연결된 여러 이벤트 로드
+     */
+    fun loadWidgetEvents(widgetId: Int): List<Event> {
+        val json = prefs.getString(KEY_WIDGET_EVENT + widgetId + "_multi", null) ?: return emptyList()
+        val type = object : TypeToken<List<String>>() {}.type
+        val eventIds: List<String> = gson.fromJson(json, type)
+        val allEvents = loadEvents()
+        return eventIds.mapNotNull { id -> allEvents.find { it.id == id } }
+    }
+
+    /**
+     * 위젯이 멀티 이벤트 모드인지 확인
+     */
+    fun isMultiEventWidget(widgetId: Int): Boolean {
+        return prefs.contains(KEY_WIDGET_EVENT + widgetId + "_multi")
     }
 
     /**
@@ -185,6 +214,7 @@ class WidgetPreferences(context: Context) {
     fun deleteWidgetConfig(widgetId: Int) {
         prefs.edit()
             .remove(KEY_WIDGET_EVENT + widgetId)
+            .remove(KEY_WIDGET_EVENT + widgetId + "_multi")
             .remove(KEY_BACKGROUND_COLOR + widgetId)
             .remove(KEY_TEXT_COLOR + widgetId)
             .remove(KEY_FONT_SIZE + widgetId)
