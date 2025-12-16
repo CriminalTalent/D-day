@@ -27,6 +27,8 @@ class WidgetPreferences(context: Context) {
         private const val KEY_STICKER_ID = "sticker_id_"
         private const val KEY_FRAME_STYLE = "frame_style_"
         private const val KEY_THEME = "theme_"
+        private const val KEY_STICKER_COLOR_ENABLED = "sticker_color_enabled_" // + widgetId
+        private const val KEY_STICKER_COLOR = "sticker_color_" // + widgetId
     }
 
     /**
@@ -208,6 +210,36 @@ class WidgetPreferences(context: Context) {
         }
     }
 
+    // ========== 스티커 색상 커스터마이징 기능 ==========
+
+    /**
+     * 스티커 색상 변경 활성화 여부 저장
+     */
+    fun saveStickerColorEnabled(widgetId: Int, enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_STICKER_COLOR_ENABLED + widgetId, enabled).apply()
+    }
+
+    /**
+     * 스티커 색상 변경 활성화 여부 로드
+     */
+    fun isStickerColorEnabled(widgetId: Int): Boolean {
+        return prefs.getBoolean(KEY_STICKER_COLOR_ENABLED + widgetId, false)
+    }
+
+    /**
+     * 스티커 색상 저장
+     */
+    fun saveStickerColor(widgetId: Int, color: Int) {
+        prefs.edit().putInt(KEY_STICKER_COLOR + widgetId, color).apply()
+    }
+
+    /**
+     * 스티커 색상 로드 (기본값: 흰색)
+     */
+    fun loadStickerColor(widgetId: Int): Int {
+        return prefs.getInt(KEY_STICKER_COLOR + widgetId, 0xFFFFFFFF.toInt())
+    }
+
     /**
      * 특정 위젯 설정 삭제
      */
@@ -222,6 +254,8 @@ class WidgetPreferences(context: Context) {
             .remove(KEY_STICKER_ID + widgetId)
             .remove(KEY_FRAME_STYLE + widgetId)
             .remove(KEY_THEME + widgetId)
+            .remove(KEY_STICKER_COLOR_ENABLED + widgetId)
+            .remove(KEY_STICKER_COLOR + widgetId)
             .apply()
     }
 }
